@@ -1,0 +1,23 @@
+#!/bin/bash
+# waybar smart-bulb module — reads the anvil broker (:9130).
+# Usage:
+#   waybar-bulb            -> print waybar JSON for the bar
+#   waybar-bulb set <state>-> set broker state (idle|working|needs_input|done|error|off)
+#   waybar-bulb status     -> print raw /status JSON
+set -uo pipefail
+
+BROKER="http://192.168.1.8:9130"
+
+case "${1:-}" in
+  set)
+    curl -fsS --max-time 4 "$BROKER/set/${2:-idle}" >/dev/null 2>&1 || true
+    # echo current bar state
+    curl -fsS --max-time 4 "$BROKER/bar" 2>/dev/null || echo '{"text":"●","class":"off","tooltip":"anvil down"}'
+    ;;
+  status)
+    curl -fsS --max-time 4 "$BROKER/status" 2>/dev/null || echo '{"error":"anvil down"}'
+    ;;
+  *)
+    curl -fsS --max-time 4 "$BROKER/bar" 2>/dev/null || echo '{"text":"●","class":"off","tooltip":"smart bulb: anvil down"}'
+    ;;
+esac
