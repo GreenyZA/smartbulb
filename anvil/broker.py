@@ -95,6 +95,13 @@ PATTERNS: dict[str, dict] = {
             BASE
         ],
     },
+    "email": {
+        "loop": False,
+        "steps": [
+            ("hue", (240, 100, 100), 0.5),    # blue flash (new mail)
+            BASE
+        ],
+    },
     "git_updated": {
         "loop": False,
         "steps": [
@@ -120,6 +127,7 @@ LABELS = {
     "error": "error",
     "off": "off",
     "mail_checked": "MAIL CHECKED",
+    "email": "you have email",
     "git_updated": "GIT UPDATED",
     "backup_fail": "BACKUP FAILED",
 }
@@ -134,7 +142,7 @@ _backup_fail_state = {"active": False, "last_flash": 0, "end_time": 0}
 
 
 # Precedence: higher number = higher priority. needs_input sticks until cleared.
-PRECEDENCE = {"off": 0, "idle": 1, "done": 1, "error": 2, "working": 3, "needs_input": 4, "mail_checked": 3, "git_updated": 3, "backup_fail": 2}
+PRECEDENCE = {"off": 0, "idle": 1, "done": 1, "error": 2, "working": 3, "needs_input": 4, "mail_checked": 3, "git_updated": 3, "backup_fail": 2, "email": 3}
 
 def set_state(state: str) -> bool:
     if state not in PATTERNS:
@@ -210,7 +218,7 @@ async def _run_pattern(dev, state: str, seq: int) -> None:
                 return
         if not pat["loop"]:
             # Non-loop patterns that should auto-return to idle
-            if state in ("needs_input", "mail_checked", "git_updated"):
+            if state in ("needs_input", "mail_checked", "git_updated", "email"):
                 with _lock:
                     _desired["state"] = "idle"
                     _desired["seq"] += 1
