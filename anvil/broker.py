@@ -69,7 +69,7 @@ PATTERNS: dict[str, dict] = {
     },
     "needs_input": {
         "loop": False,
-        "steps": [("ct", (4000, 100), 0.5), BASE],
+        "steps": [("hue", (0, 100, 100), 0.5), BASE],
     },
     "done": {
         "loop": False,
