@@ -218,6 +218,7 @@ async def _run_pattern(dev, state: str, seq: int) -> None:
 
 
 async def _worker() -> None:
+    global _backup_fail_state
     from tapo import ApiClient
 
     dev = None
@@ -273,6 +274,19 @@ async def _worker() -> None:
                 last_seq = seq
                 if cur and not cur.done():
                     cur.cancel()
+                # Reconnect for every state change: a reused Tapo session silently
+                # accepts commands but stops actuating after colour-mode switches.
+                try:
+                    from tapo import ApiClient
+                    dev = await ApiClient(USER, PASS).l530(IP)
+                    with _lock:
+                        _applied["connected"] = True
+                except Exception:
+                    dev = None
+                    with _lock:
+                        _applied["connected"] = False
+                    await asyncio.sleep(5)
+                    continue
                 cur = asyncio.create_task(_run_pattern(dev, state, seq))
         
         if cur and cur.done():
