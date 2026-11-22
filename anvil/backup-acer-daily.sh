@@ -12,6 +12,7 @@ WEEKLY_SNAP="$BASE/weekly-$(date +%Y-%V)"
 
 mkdir -p "$BASE" "$BACKUP_ROOT/metadata"
 EXCLUDES=(
+  --exclude='.hermes/'
   --exclude='.cache/'
   --exclude='**/.cache/'
   --exclude='.local/share/Trash/'
@@ -53,8 +54,8 @@ if [ "$(date +%u)" = "7" ]; then
   cp -al "$DAILY_SNAP" "$WEEKLY_SNAP"
 fi
 
-find "$BASE" -maxdepth 1 -type d -name 'daily-*' -mtime +7 -print -exec rm -rf {} + >> "$LOG" 2>&1 || true
-find "$BASE" -maxdepth 1 -type d -name 'weekly-*' -mtime +28 -print -exec rm -rf {} + >> "$LOG" 2>&1 || true
+find "$BASE" -maxdepth 1 -type d -name 'daily-*' -mtime +7 -print -exec chmod -R u+w {} \; -exec rm -rf {} + >> "$LOG" 2>&1 || true
+find "$BASE" -maxdepth 1 -type d -name 'weekly-*' -mtime +28 -print -exec chmod -R u+w {} \; -exec rm -rf {} + >> "$LOG" 2>&1 || true
 
 ln -sfn "daily-$STAMP" "$BASE/latest"
 log "OK snapshot $DAILY_SNAP from acer"

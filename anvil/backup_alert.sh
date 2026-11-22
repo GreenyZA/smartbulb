@@ -7,7 +7,7 @@ BACKUP_ROOT=/backup
 STATUS_JSON="$BACKUP_ROOT/metadata/backup-status.json"
 LOG="$BACKUP_ROOT/metadata/backup.log"
 VAULT_INBOX="/home/warpuppy/Documents/Clarity/00-Inbox/email-alerts.md"
-BULB_BROKER="http://localhost:9130"
+BULB_BROKER="http://192.168.1.10:9130"   # canonical writer is acer (RFC-2026-001)
 ACER="acer"
 PYTHON="$(command -v python3 || echo /usr/bin/python3)"
 
