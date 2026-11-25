@@ -6,8 +6,11 @@
 set -euo pipefail
 
 ENV=/opt/smartbulb/.env
-read -rp "Tapo account email [personal-mailbox@example.com]: " EMAIL
-EMAIL=${EMAIL:-personal-mailbox@example.com}
+read -rp "Tapo account email: " EMAIL
+if [[ -z ${EMAIL} ]]; then
+  echo "an account email is required" >&2
+  exit 1
+fi
 read -rsp "Tapo account password (hidden): " PASS; echo
 read -rp "Bulb IP [192.168.1.225]: " BIP
 BIP=${BIP:-192.168.1.225}

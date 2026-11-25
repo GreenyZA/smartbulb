@@ -28,7 +28,7 @@ client. This keeps the bulb and the bar in sync from one source of truth.
 **Everything needed to move this to a fresh machine is in this project plus the
 ledger** — with ONE exception: the Tapo account password (see below).
 
-- **Account email:** `personal-mailbox@example.com`
+- **Account email:** set on the box by `set-credentials.sh`. It is not stored in this repo.
 - **Bulb IP:** `192.168.1.225` (Tapo L530, MAC `B4-B0-24-E3-44-AE`)
 - **Broker bind:** anvil `192.168.1.8:9130`
 - **Tapo library:** `tapo` (PyPI, v0.11.0) — NOT `python-tapo`. Installed in

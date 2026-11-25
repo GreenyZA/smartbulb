@@ -95,8 +95,11 @@ if [ "$status" != "healthy" ]; then
 
   echo "$(date '+%F %T') ALERT: backup status=$status lenovo=$lenovo_ok acer=$acer_ok projects=$projects_ok keyfiles=$key_files_ok drive=$drive_ok" >> "$LOG"
 
-  email_body="From: personal-mailbox@example.com
-To: personal-mailbox@example.com
+  alert_from=${SMARTBULB_ALERT_FROM:-}
+  alert_to=${SMARTBULB_ALERT_TO:-}
+  if [[ -n $alert_from && -n $alert_to ]]; then
+    email_body="From: ${alert_from}
+To: ${alert_to}
 Subject: [Clarity Backup Alert] ${status}
 
 Backup status: ${status}
@@ -108,7 +111,10 @@ Drive space: ${drive_ok} (${drive_err})
 
 Action required: Check backup system immediately.
 "
-  printf '%s\n' "$email_body" | base64 -w0 | ssh -o BatchMode=yes -o ConnectTimeout=15 "$ACER" "base64 -d | /home/warpuppy/.local/bin/himalaya message send --account personal" >/dev/null 2>&1 || true
+    printf '%s\n' "$email_body" | base64 -w0 | ssh -o BatchMode=yes -o ConnectTimeout=15 "$ACER" "base64 -d | /home/warpuppy/.local/bin/himalaya message send --account personal" >/dev/null 2>&1 || true
+  else
+    echo "$(date '+%F %T') ALERT mail skipped: set SMARTBULB_ALERT_FROM and SMARTBULB_ALERT_TO" >> "$LOG"
+  fi
 
   exit 1
 fi
